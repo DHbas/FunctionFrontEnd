@@ -22,6 +22,14 @@ export default function HomePage() {
     }
   }
 
+  const handleButtonHover = (event) => {
+    event.target.style.color = "green";
+  };
+  
+  const handleButtonUnhover = (event) => {
+    event.target.style.color = "black";
+  };
+
   const handleAccount = (account) => {
     if (account) {
       console.log ("Account connected: ", account);
@@ -59,19 +67,32 @@ export default function HomePage() {
     }
   }
 
-  const deposit = async() => {
-    if (atm) {
-      let tx = await atm.deposit(1);
-      await tx.wait()
-      getBalance();
-    }
+  const fund = async() => {
+    const confirmFund = window.confirm("Funding 1 ETH. Are you sure?");
+    if (confirmFund) {
+        if (atm) {  
+          const tx = await atm.fund(1);
+          await tx.wait();
+          getBalance();
+
+          // Show a success message to the user.
+          alert("Successfully funded 1 ETH!");
+        }
+      }
   }
 
-  const withdraw = async() => {
-    if (atm) {
-      let tx = await atm.withdraw(1);
-      await tx.wait()
-      getBalance();
+  const redeem = async() => {
+    const confirmRedeem = window.confirm("Redeeming 1 ETH. Are you sure?");
+
+    if (confirmRedeem) {
+        if (atm) {
+            let tx = await atm.redeem(1);
+            await tx.wait();
+            getBalance();
+
+            // Show a success message to the user.
+            alert("Successfully redeemed 1 ETH!");
+        }
     }
   }
 
@@ -94,8 +115,8 @@ export default function HomePage() {
       <div>
         <p>Your Account: {account}</p>
         <p>Your Balance: {balance}</p>
-        <button onClick={deposit}>Deposit 1 ETH</button>
-        <button onClick={withdraw}>Withdraw 1 ETH</button>
+        <button onClick={fund} style={{ margin: "0 10px" }} onMouseEnter={handleButtonHover} onMouseLeave={handleButtonUnhover}>Fund 1 ETH</button>
+        <button onClick={redeem} style={{ margin: "0 10px" }} onMouseEnter={handleButtonHover} onMouseLeave={handleButtonUnhover}>Redeem 1 ETH</button>
       </div>
     )
   }
@@ -103,8 +124,8 @@ export default function HomePage() {
   useEffect(() => {getWallet();}, []);
 
   return (
-    <main className="container">
-      <header><h1>Welcome to the Metacrafters ATM!</h1></header>
+    <main className="container" style={{ color: 'purple', backgroundColor: 'lightblue' }}>
+      <header><h1>Welcome to DJ's Mutual Fund!</h1></header>
       {initUser()}
       <style jsx>{`
         .container {

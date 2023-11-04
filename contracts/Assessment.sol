@@ -7,8 +7,8 @@ contract Assessment {
     address payable public owner;
     uint256 public balance;
 
-    event Deposit(uint256 amount);
-    event Withdraw(uint256 amount);
+    event Fund(uint256 amount);
+    event Redeem(uint256 amount);
 
     constructor(uint initBalance) payable {
         owner = payable(msg.sender);
@@ -19,7 +19,7 @@ contract Assessment {
         return balance;
     }
 
-    function deposit(uint256 _amount) public payable {
+    function fund(uint256 _amount) public payable {
         uint _previousBalance = balance;
 
         // make sure this is the owner
@@ -32,29 +32,29 @@ contract Assessment {
         assert(balance == _previousBalance + _amount);
 
         // emit the event
-        emit Deposit(_amount);
+        emit Fund(_amount);
     }
 
     // custom error
-    error InsufficientBalance(uint256 balance, uint256 withdrawAmount);
+    error InsufficientBalance(uint256 balance, uint256 redeemAmount);
 
-    function withdraw(uint256 _withdrawAmount) public {
+    function redeem(uint256 _redeemAmount) public {
         require(msg.sender == owner, "You are not the owner of this account");
         uint _previousBalance = balance;
-        if (balance < _withdrawAmount) {
+        if (balance < _redeemAmount) {
             revert InsufficientBalance({
                 balance: balance,
-                withdrawAmount: _withdrawAmount
+                redeemAmount: _redeemAmount
             });
         }
 
-        // withdraw the given amount
-        balance -= _withdrawAmount;
+        // redeem the given amount
+        balance -= _redeemAmount;
 
         // assert the balance is correct
-        assert(balance == (_previousBalance - _withdrawAmount));
+        assert(balance == (_previousBalance - _redeemAmount));
 
         // emit the event
-        emit Withdraw(_withdrawAmount);
+        emit Redeem(_redeemAmount);
     }
 }
